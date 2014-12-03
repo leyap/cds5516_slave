@@ -1,12 +1,10 @@
 /*
  *	created:	lisper
  *	by:		2013-09-10
- *	function:	test the cds55
- *	need:		servo_ack_check, SPI.h
+ *	function:	firmware of digitalservo shield
  *
  */
 #include <SPI.h>
-//#include "servo_ack_check.h"
 
 #define SPI_BUF_SIZE 100
 
@@ -48,3 +46,16 @@ void loop (void) {
 	}
 }
 
+//  //for cds55 
+//  //function:	is checksum ok 
+//  boolean servo_ack_check (uint8_t *data) {
+//  	uint8_t sum = 0;
+//  	uint8_t leng = data[3] + 3;
+//  	for (uint8_t i=2; i<leng; i++) {
+//  		sum += data[i];
+//  	}
+//  	if (data[leng] == (uint8_t )~sum)
+//  		return true;
+//  	else
+//  		return false;
+//  }

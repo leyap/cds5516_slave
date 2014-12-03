@@ -1,7 +1,7 @@
 /*
  *	created:	2013-09-10
  *	by:		lisper (leyapin@gmail.com)
- *	description:	control cds55 servo
+ *	description:	library for cds5516 servo
  *	version:	1.0
  *	last:		2013-09-11 11:02
  *

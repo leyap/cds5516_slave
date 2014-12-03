@@ -1,14 +1,11 @@
 /*
  *	created:	lisper
  *	by:		2013-09-10
- *	function:	test the cds55
- *	need:		read_serial.h, split.h, cds55.h, SPI.h
+ *	description:	test the digitalservo shield with cds556 servo
  *
  */
 
 #include <SPI.h>
-#include "split.h"
-#include "read_serial.h"
 #include "cds55.h"
 
 #define CMD_SIZE 32
@@ -27,8 +24,8 @@ void setup (void) {
 //
 void loop (void) {
 	digitalWrite (SS, LOW);	// 片选为从机
-	if (read_serial (cmd_buf, CMD_SIZE)) {	//read serial data to cmd_buf
-		int leng = split_in (cmdp_buf, cmd_buf, CMDP_SIZE);	//build cmdp_buf by cmd_buf
+	if (serialRead (Serial, (uint8_t *)cmd_buf, CMD_SIZE, 4)) {	//read serial data to cmd_buf
+		int leng = split (cmdp_buf, cmd_buf, CMDP_SIZE);	//build cmdp_buf by cmd_buf
 
 		char command = cmdp_buf[0][0];	//get command
 		uint8_t id = atoi (cmdp_buf[1]); //get id
@@ -66,5 +63,39 @@ void loop (void) {
 	}
 	digitalWrite (SS, HIGH);	//取消从机
 }
+
+int split (char **cmdstr, char *str, int leng) {
+	int i;
+	for (i=0; *str && i<leng-1; i++) {
+		while (isspace (*str))
+			*str++='\0';
+		if (*str == '\0')
+			break;
+		cmdstr[i] = str;
+		while (isgraph (*str))
+			str++;
+	}
+	cmdstr[i] = '\0';
+	return i;
+}
+
+//call like : serialRead (Serial1, buffer, 12, 5)
+uint8_t serialRead (HardwareSerial the_serial, 
+		uint8_t *buf, uint8_t leng, uint8_t timeout) {
+	int sub;
+	if (the_serial.available ()) {
+		for (sub=0; sub<leng; sub++) {
+			uint32_t start_time = millis ();
+			while (!the_serial.available ()) {
+				if (millis () - start_time > timeout)
+					return sub;
+			}
+			buf[sub] = the_serial.read ();
+		}
+		return sub;
+	}
+	return 0;
+}
+
 
 
